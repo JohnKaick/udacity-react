@@ -12,13 +12,16 @@ class App extends React.Component {
     this.onCloseSearch = this.onCloseSearch.bind(this)
     this.state = {
       showSearchPage: false,
-      books: []
+      books: null
     }
   }
 
   componentDidMount() {
     BooksAPI.getAll().then((bks) => {
-      this.setState({ books: bks || [] })
+      console.log(bks)
+      this.setState({ 
+        books: bks || [] 
+      })
     })
   }
 
@@ -36,8 +39,8 @@ class App extends React.Component {
         {...this.props}
         {...this.state}
         handleChange={this.handleChange}
-        closeSearch={this.closeSearch}
-        openSearch={this.openSearch}
+        onCloseSearch={this.onCloseSearch}
+        onOpenSearch={this.onOpenSearch}
       />
     );
   }

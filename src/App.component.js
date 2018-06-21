@@ -3,14 +3,15 @@ import './App.css'
 
 export default function (props) {
 
-  const { openSearch, closeSearch, showSearchPage, books } = props
+  const { onCloseSearch, onOpenSearch,
+    showSearchPage, books } = props
 
   return (
     <div className="app">
     {showSearchPage ? (
       <div className="search-books">
         <div className="search-books-bar">
-          <a className="close-search" onClick={closeSearch}>Close</a>
+          <a className="close-search" onClick={onCloseSearch}>Close</a>
           <div className="search-books-input-wrapper">
             {/*
               NOTES: The search from BooksAPI is limited to a particular set of search terms.
@@ -20,7 +21,6 @@ export default function (props) {
               you don't find a specific author or title. Every search is limited by search terms.
             */}
             <input type="text" placeholder="Search by title or author"/>
-
           </div>
         </div>
         <div className="search-books-results">
@@ -28,28 +28,46 @@ export default function (props) {
         </div>
       </div>
     ) : (
-      <div>
-        {(books || []).map((b, i) => {
-          (
-            <p keys={i}>
-              {b.title}
-              test
-            </p>
-          )
-        })}
-      </div>
-      /*
       <div className="list-books">
         <div className="list-books-title">
           <h1>MyReads</h1>
         </div>
         <div className="list-books-content">
           <div>
-
             <div className="bookshelf">
               <h2 className="bookshelf-title">Currently Reading</h2>
               <div className="bookshelf-books">
                 <ol className="books-grid">
+
+                {(books || []).map((b, i) => (
+                    <li key={i}>
+                      <div className="book">
+                        <div className="book-top">
+                          <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: b.imageLinks.thumbnail }}></div>
+                          <div className="book-shelf-changer">
+                            <select>
+                              <option value="move" disabled>Move to...</option>
+                              <option value="currentlyReading">Currently Reading</option>
+                              <option value="wantToRead">Want to Read</option>
+                              <option value="read">Read</option>
+                              <option value="none">None</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div className="book-title">{b.title}</div>
+                        {(b.authors).map((a, i) => (
+                          <div className="book-authors" key={i}>
+                            {a}
+                          </div>
+                        ))}
+                      </div>
+                    </li>
+                  )
+                )}
+
+
+
+
                   <li>
                     <div className="book">
                       <div className="book-top">
@@ -196,10 +214,9 @@ export default function (props) {
           </div>
         </div>
         <div className="open-search">
-          <a onClick={openSearch}>Add a book</a>
+          <a onClick={onOpenSearch}>Add a book</a>
         </div>
       </div>
-      */
     )}
   </div>
   )
