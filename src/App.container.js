@@ -10,6 +10,7 @@ class App extends React.Component {
     super(props)
     this.onOpenSearch = this.onOpenSearch.bind(this)
     this.onCloseSearch = this.onCloseSearch.bind(this)
+    this.onChangeShelf = this.onChangeShelf.bind(this)
     this.state = {
       showSearchPage: false,
       books: null
@@ -33,6 +34,17 @@ class App extends React.Component {
     this.setState({ showSearchPage: true })
   }
 
+  onChangeShelf(e, book) {
+    const shelf = e.target.value
+    BooksAPI.update(book, shelf).then(() => {
+      return BooksAPI.getAll()
+    }).then((bks) => {
+      this.setState({ 
+        books: bks || [] 
+      })
+    })
+  }
+
   render() {
     return (
       <Component
@@ -41,6 +53,7 @@ class App extends React.Component {
         handleChange={this.handleChange}
         onCloseSearch={this.onCloseSearch}
         onOpenSearch={this.onOpenSearch}
+        onChangeShelf={this.onChangeShelf}
       />
     );
   }
