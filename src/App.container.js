@@ -11,6 +11,7 @@ class App extends React.Component {
     this.onOpenSearch = this.onOpenSearch.bind(this)
     this.onCloseSearch = this.onCloseSearch.bind(this)
     this.onChangeShelf = this.onChangeShelf.bind(this)
+    this.onSearch = this.onSearch.bind(this)
     this.state = {
       showSearchPage: false,
       books: null
@@ -18,31 +19,40 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    BooksAPI.getAll().then((bks) => {
-      console.log(bks)
-      this.setState({ 
-        books: bks || [] 
-      })
-    })
+    BooksAPI.getAll()
+      .then(bks => this.setState({ books: bks }))
+      .catch(err => this.setState({ books: [] }))
   }
 
   onCloseSearch(e) {
-    this.setState({ showSearchPage: false })
+    BooksAPI.getAll()
+      .then(bks => this.setState({ books: bks, showSearchPage: false }))
+      .catch(err => this.setState({ books: [] }))
   }
 
   onOpenSearch(e) {
-    this.setState({ showSearchPage: true })
+    this.setState({ 
+      showSearchPage: true,
+      books: null
+    })
   }
 
   onChangeShelf(e, book) {
     const shelf = e.target.value
-    BooksAPI.update(book, shelf).then(() => {
-      return BooksAPI.getAll()
-    }).then((bks) => {
-      this.setState({ 
-        books: bks || [] 
-      })
-    })
+    BooksAPI.update(book, shelf)
+      .then(() => BooksAPI.getAll())
+      .then((bks) => this.setState({ books: bks }))
+      .catch(err => this.setState({ books: [] }))
+  }
+
+  onSearch(e) {
+    e.preventDefault()
+    const query = e.target.value
+    if (query && query.length > 2) {
+      BooksAPI.search(query)
+        .then((bks) => this.setState({ books: bks || [] }))
+        .catch(err => this.setState({ books: [] }))
+    }
   }
 
   render() {
@@ -54,6 +64,7 @@ class App extends React.Component {
         onCloseSearch={this.onCloseSearch}
         onOpenSearch={this.onOpenSearch}
         onChangeShelf={this.onChangeShelf}
+        onSearch={this.onSearch}
       />
     );
   }

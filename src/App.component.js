@@ -1,10 +1,9 @@
 import React from 'react';
 import './App.css'
-import mainLogo from './logo.svg'
 
 export default function (props) {
 
-  const { onCloseSearch, onOpenSearch, onChangeShelf,
+  const { onCloseSearch, onOpenSearch, onChangeShelf, onSearch, 
     showSearchPage, books } = props
 
   return (
@@ -14,14 +13,43 @@ export default function (props) {
         <div className="search-books-bar">
           <a className="close-search" onClick={onCloseSearch}>Close</a>
           <div className="search-books-input-wrapper">
-            {/*
-              NOTES: The search from BooksAPI is limited to a particular set of search terms.
-              You can find these search terms here:
-              https://github.com/udacity/reactnd-project-myreads-starter/blob/master/SEARCH_TERMS.md
-              However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
-              you don't find a specific author or title. Every search is limited by search terms.
-            */}
-            <input type="text" placeholder="Search by title or author"/>
+
+          <input type="text" placeholder="Search by title or author" onChange={(e) => onSearch(e)}/>
+
+            <div className="bookshelf-books">
+                <ol className="books-grid">
+
+                { books && books.length > 0 ? (
+                  (books || []).map((b, i) => (
+                    <li key={i}>
+                      <div className="book">
+                        <div className="book-top">
+                          <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${b.imageLinks.smallThumbnail})` }}></div>
+                          <div className="book-shelf-changer">
+                            <select onChange={(e) =>  onChangeShelf(e, b)}>
+                              <option value="move" disabled>Move to...</option>
+                              <option value="currentlyReading">Currently Reading</option>
+                              <option value="wantToRead">Want to Read</option>
+                              <option value="read">Read</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div className="book-title">{b.title}</div>
+                        {(b.authors).map((a, i) => (
+                          <div className="book-authors" key={i}>
+                            {a}
+                          </div>
+                        ))}
+                      </div>
+                    </li>
+                  )
+                )) : (
+                  <h2 className="bookshelf-title">The books not found</h2>
+                )}
+
+                </ol>
+              </div>
+
           </div>
         </div>
         <div className="search-books-results">
